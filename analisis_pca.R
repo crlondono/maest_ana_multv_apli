@@ -1,4 +1,12 @@
 
+#==============================================================
+rm(list = ls())  # Limpia el ambiente
+graphics.off()   # Limpia los graficos
+gc(reset = TRUE) # Recoge la basura de la RAM
+cat("\f")        # Limpia la consola
+#==============================================================
+
+
 ## Librerías / Configuraciones Ini
 library(dplyr)
 library(data.table)
@@ -13,14 +21,33 @@ dir <- getwd()
 setwd(dir)
 
 # Lectura de datos
-df <- fread("owid-covid-data.csv")
+# df <- fread("owid-covid-data.csv")
+df <- fread("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv")
 head(View(df))
+ 
 
+# Explaración datos crudos ------------------------------------------------
+
+sort(unique(df$continent))
+sort(unique(df$location))
+sort(unique(df$iso_code))
+sort(unique(df$date)) # desde 202001 hasta 202103
+
+
+
+# Diccionario de datos
+dicc <- read.csv(url("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-codebook.csv"))
+
+# Cambio los nombre de las variables
+dicc$column <- gsub("per_million","pm",dicc$column)
+dicc$column <- gsub("per_thousand","pt",dicc$column)
+dicc$column <- gsub("per_hundred","ph",dicc$column)
+
+# Filtramos los datos de américa del sur
 df_south <- df %>%  filter(continent == "South America")
 
 
-
-# Calidad de datos ------------------------------------------------------
+ # Calidad de datos ------------------------------------------------------
 # Queremos observar la cantidad de datos faltantes por variable
 dim1 <- dim(df_south)[1] 
 na_printer <- function(x,dim1,df){

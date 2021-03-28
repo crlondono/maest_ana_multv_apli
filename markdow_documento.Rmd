@@ -9,10 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Análisis de Componentes Principales para datos de Covid19 en el continente Americano
+## ACP para datos de Covid19 en el continente americano
 
-En el presente trabajo se analisaran las principales variables relacionadas con la propagación del Covid-19 en el continente americano, considerando países tanto de Sur-América, Centro América y Norte America. Para el análisis se utilizara la técnica de Análisis de Componentes principales y representaciones biplot. 
-
+En el presente trabajo se analizarán las principales variables relacionadas con la propagación del Covid-19 en el continente americano, considerando países tanto de Sur-América, Centro América y Norte América. Para el análisis se utilizará la técnica de análisis de componentes principales(ACP) y representaciones Biplot.
 
 ```{r, echo=FALSE, message=FALSE}
 # cargamos librerias
@@ -61,8 +60,8 @@ na_printer <- function(x,dim1,df){
     na_pr_mss <- paste(na_pr,"%")
     mssg_na <- paste("Total de datos faltantes", na_pr_mss, sep = " ")
     
-    print(messg)
-    print(mssg_na)
+    # print(messg)
+    # print(mssg_na)
 
     return(c(x,na_pr))
 }
