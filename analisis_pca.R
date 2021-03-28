@@ -27,12 +27,10 @@ head(View(df))
  
 
 # Explaración datos crudos ------------------------------------------------
-
 sort(unique(df$continent))
-sort(unique(df$location))
+sort(unique(df$location))   # 215 paises en la base original
 sort(unique(df$iso_code))
-sort(unique(df$date)) # desde 202001 hasta 202103
-
+sort(unique(df$date))       # desde 202001 hasta 202103
 
 
 # Diccionario de datos
@@ -50,17 +48,17 @@ df_south <- df %>%  filter(continent == "South America")
  # Calidad de datos ------------------------------------------------------
 # Queremos observar la cantidad de datos faltantes por variable
 dim1 <- dim(df_south)[1] 
-na_printer <- function(x,dim1,df){
+na_printer <- function(columna,dim1,df){
   
-    messg <- paste("Variable: " , x)
-    na_pr <- round(sum(is.na(df[[x]])) / dim1 * 100, 2)
+    messg <- paste("Variable: " , columna)
+    na_pr <- round(sum(is.na(df[[columna]])) / dim1 * 100, 2)
     na_pr_mss <- paste(na_pr,"%")
     mssg_na <- paste("Total de datos faltantes", na_pr_mss, sep = " ")
     
     print(messg)
     print(mssg_na)
 
-    return(c(x,na_pr))
+    return(c(columna,na_pr))
 }
 
 columnas <- names(df)
@@ -114,6 +112,7 @@ agrupamiento_por_media <- function(df_filter){
 
 df_total_mean_sur <- agrupamiento_por_media(df_south_select)
 df_total_mean_america <- agrupamiento_por_media(df_total_select_ame)
+
 # Análsis Gráfico ---------------------------------------------------------
 
 cor_plots_vars <- function(df_total_mean,limite_inf,limite_sup){
@@ -156,3 +155,40 @@ cor_plots_vars(df_total_mean_america,10,18)
 ## PCA SUR-AMERICA
 pca_sur <- pca_plots(df_total_mean_sur)
 pca_ame <- pca_plots(df_total_mean_america)
+
+#==========================================================================
+# cambio el nombre de las variables 
+
+cambio_variables <- function(data_frame){
+  
+  new_nombres = gsub("per_million","pm", names(data_frame))
+  new_nombres = gsub("per_thousand","pt", new_nombres)
+  colnames(data_frame) <- c(new_nombres)
+  return(data_frame)  
+}
+
+df_total_mean_america <- cambio_variables(df_total_mean_america)
+
+#==========================================================================
+# si las variables son demasiado correlacionas, quitamos una de ellas
+# 1 nos interesa el conteo de casos y muertes por millon de habitantes
+
+datos_america <- df_total_mean_america %>% 
+                 select(-c("total_cases","new_cases","total_deaths","new_deaths"))
+
+cor_plots_vars(datos_america,2,18)
+
+# los nuevos casos y los casos total son demasiado correlacionados
+# quito los datos nuevos y trabajo con los totales
+# pues van acumulando la información de los casos nuevos
+datos_america <- datos_america %>% 
+  select(-c("new_cases_pm","new_deaths_pm"))
+
+# la edad media está muy correlaciona con 
+# las variables de mayores de 65 y 70
+datos_america <- datos_america %>% 
+  select(-c("aged_65_older","aged_70_older"))
+
+
+cor_plots_vars(datos_america,2,14)
+pca_ame <- pca_plots(datos_america)
