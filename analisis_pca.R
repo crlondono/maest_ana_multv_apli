@@ -29,7 +29,7 @@ head(View(df))
 # Explaración datos crudos ------------------------------------------------
 sort(unique(df$continent))
 sort(unique(df$location))   # 215 paises en la base original
-sort(unique(df$iso_code))
+sort(unique(df$iso_code))   # este campo puede ser útil para las gráficas
 sort(unique(df$date))       # desde 202001 hasta 202103
 
 
@@ -179,10 +179,8 @@ datos_america <- df_total_mean_america %>%
 cor_plots_vars(datos_america,2,18)
 
 # los nuevos casos y los casos total son demasiado correlacionados
-# quito los datos nuevos y trabajo con los totales
-# pues van acumulando la información de los casos nuevos
 datos_america <- datos_america %>% 
-  select(-c("new_cases_pm","new_deaths_pm"))
+  select(-c("total_cases_pm","total_deaths_pm"))
 
 # la edad media está muy correlaciona con 
 # las variables de mayores de 65 y 70

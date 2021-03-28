@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 En el presente trabajo se analizarán las principales variables relacionadas con la propagación del Covid-19 en el continente americano, considerando países tanto de Sur-América, Centro América y Norte América. Para el análisis se utilizará la técnica de análisis de componentes principales(ACP) y representaciones Biplot.
 
 ```{r, echo=FALSE, message=FALSE}
+
 # cargamos librerias
 library(dplyr)
 library(data.table)
