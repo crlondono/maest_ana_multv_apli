@@ -1,17 +1,19 @@
 ---
 title: "PCA Covid19 América"
 author: "Daniel Munera y Cristian Londoño"
-date: "22/3/2021"
-output: html_document
+date: "04/04/2021"
+output:
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## ACP para datos de Covid19 en el continente americano
+## PCA para datos de Covid19 en el continente americano
 
-En el presente trabajo se analizarán las principales variables relacionadas con la propagación del Covid-19 en el continente americano, considerando países tanto de Sur-América, Centro América y Norte América. Para el análisis se utilizará la técnica de análisis de componentes principales(ACP) y representaciones Biplot.
+En el presente trabajo se analizarán las principales variables relacionadas con la propagación del Covid-19 en el continente americano, considerando países tanto de Sur-América, Centro América y Norte América. Para el análisis se utilizará la técnica de análisis de componentes principales(PCA) y representaciones Biplot.
 
 ```{r, echo=FALSE, message=FALSE}
 
@@ -23,6 +25,7 @@ library(lubridate)
 library(factoextra)
 library(corrplot)
 library(FactoMineR)
+library(knitr)
 
 
 ```
@@ -39,9 +42,35 @@ setwd(dir)
 
 ```{r, echo=FALSE, message=FALSE}
 # Lectura de datos
-df <- fread("owid-covid-data.csv")
+df <- fread("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv")
+dicc <- read.csv(url("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-codebook.csv"))
 #head(View(df))
 ```
+
+Para el análisis se utilizarán datos de la publicación de la Universidad de Oxford  OurWorldInData actualizados hasta el 03 de abril del 2021. La descripción de las variables a utilizar se presentan a continuación:
+
+```{r, echo=FALSE}
+# Cambio los nombre de las variables
+dicc$column <- gsub("per_million","pm",dicc$column)
+dicc$column <- gsub("per_thousand","pt",dicc$column)
+dicc$column <- gsub("per_hundred","ph",dicc$column)
+
+dicc <- dicc %>% select(-source)
+
+# columnas a usar:
+ variables <- c("location","new_cases_pm", "new_deaths_pm" , "stringency_index", "population",        "population_density","median_age", "gdp_per_capita", "cardiovasc_death_rate", "diabetes_prevalence","hospital_beds_pt", "life_expectancy","human_development_index")
+ 
+dicc <- dicc %>% filter(column %in% dicc)
+
+colnames(dicc) <- c("Variable","Descripción")
+
+kable(dicc)
+
+```
+
+
+
+
 
 ```{r, echo=FALSE}
 # tomamos inicialmente solo datos de suramerica
@@ -159,6 +188,13 @@ pca_plots <- function(df_total_mean){
   return(res.pca)
 }
 
+
+
+```
+
+
+
+```{r, fig.width=12, fig.height=8}
 ## PCA SUR-AMERICA
 pca_sur <- pca_plots(df_total_mean_sur)
 plot(pca_sur)

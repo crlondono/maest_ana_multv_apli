@@ -15,6 +15,7 @@ library(lubridate)
 library(factoextra)
 library(corrplot)
 library(FactoMineR)
+library(knitr)
 
 # cambio de directorio
 dir <- getwd()
@@ -30,7 +31,7 @@ head(View(df))
 sort(unique(df$continent))
 sort(unique(df$location))   # 215 paises en la base original
 sort(unique(df$iso_code))   # este campo puede ser útil para las gráficas
-sort(unique(df$date))       # desde 202001 hasta 202103
+sort(unique(df$date))       # desde 202001 hasta 202104
 
 
 # Diccionario de datos
@@ -40,6 +41,10 @@ dicc <- read.csv(url("https://raw.githubusercontent.com/owid/covid-19-data/maste
 dicc$column <- gsub("per_million","pm",dicc$column)
 dicc$column <- gsub("per_thousand","pt",dicc$column)
 dicc$column <- gsub("per_hundred","ph",dicc$column)
+
+dicc <- dicc %>% select(-source)
+
+
 
 # Filtramos los datos de américa del sur
 df_south <- df %>%  filter(continent == "South America")
@@ -176,7 +181,7 @@ df_total_mean_america <- cambio_variables(df_total_mean_america)
 datos_america <- df_total_mean_america %>% 
                  select(-c("total_cases","new_cases","total_deaths","new_deaths"))
 
-cor_plots_vars(datos_america,2,18)
+cor_plots_vars(datos_america,2,17)
 
 # los nuevos casos y los casos total son demasiado correlacionados
 datos_america <- datos_america %>% 
@@ -188,5 +193,5 @@ datos_america <- datos_america %>%
   select(-c("aged_65_older","aged_70_older"))
 
 
-cor_plots_vars(datos_america,2,14)
+cor_plots_vars(datos_america,2,13)
 pca_ame <- pca_plots(datos_america)
