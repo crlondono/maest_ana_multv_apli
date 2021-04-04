@@ -62,6 +62,7 @@ dicc <- dicc %>% select(-source)
  
 dicc <- dicc %>% filter(column %in% dicc)
 
+# cambio del nombre de las variables
 colnames(dicc) <- c("Variable","Descripción")
 
 kable(dicc)
